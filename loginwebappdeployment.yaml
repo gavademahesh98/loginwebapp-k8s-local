@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loginwebapp
+  labels:
+    app: LoginWebApp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: LoginWebApp
+  template:
+    metadata:
+      labels:
+        app: LoginWebApp
+    spec:
+      containers:
+        - name: loginwebapp-container
+          image: maheshg98/mylogin-k8s-local:v1
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loginwebapp-service
+  labels:
+    service: LoginWebApp
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30010
+  selector:
+    app: LoginWebApp
+  type: NodePort
