@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: loginwebapp-container
-          image: maheshg98/mylogin-k8s-local:v1
+          image: maheshg98/mylogin-k8s-local:v2
           ports:
             - containerPort: 8080
 ---

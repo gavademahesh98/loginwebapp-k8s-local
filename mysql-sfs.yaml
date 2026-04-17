@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-sfs
+  labels:
+    app: mysql
+spec:
+  serviceName: mysql-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql-container
+          image: mysql:8
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-dev-vol
+              mountPath: /var/lib/mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: k8s-secret
+                  key: rootpass
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: k8s-secret
+                  key: database
+      volumes:
+        - name: mysql-dev-vol
+          hostPath:
+            path: /home/ec2-user
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  labels:
+    app: mysql
+spec:
+  ports:
+    - port: 3306
+      targetPort: 3306
+      nodePort: 30011
+  type: NodePort
+  selector:
+    app: mysql
+
